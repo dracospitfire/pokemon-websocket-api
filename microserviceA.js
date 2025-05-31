@@ -14,7 +14,8 @@
 // Import the websocket library for creating the server
 // node-fetch is needed to call PokeAPI
 require ('dotenv').config();
-const express   = require("express");
+const express = require("express");
+const cors = require("cors");
 const http      = require("http");
 const WebSocket = require('ws');
 const fetch     = require('node-fetch');
@@ -26,6 +27,7 @@ const HOST = process.env.HOST || "localhost";
 const PORT = parseInt(process.env.PORT, 10) || 5050;
 
 // Middleware:
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 //confirm backend is working
