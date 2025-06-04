@@ -127,22 +127,28 @@ wss.on('connection', (ws) => {
 // real pokemon server
 // return stats as JSON object
 async function getBaseStats(name) {
-    // only need the name
-    const slug = name.toLowerCase().trim();
-    // need the stats based on the name
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${slug}`);
-    if (!res.ok) throw new Error (`Pokemon "${name}" not found`);
-    const json = await res.json();
+  const slug = name.toLowerCase().trim();
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${slug}`);
+  if (!res.ok) throw new Error(`Pokemon "${name}" not found`);
+  const json = await res.json();
 
-    // convert API stats to hashmap 
-    const stats= {};
-    json.stats.forEach(s => {
-        // formats data to return snake_Case
-        const key = s.stat.name.replace(/-/g, '_');
-        stats[key] = s.base_stat;
-    });
+  // Extract base stats
+  const stats = {};
+  json.stats.forEach(s => {
+    const key = s.stat.name.replace(/-/g, '_'); // e.g., "special-attack" → "special_attack"
+    stats[key] = s.base_stat;
+  });
 
-    return stats;
+  // Add name, type, and image
+  const type = json.types[0]?.type?.name || "unknown";
+  const image = json.sprites.other["official-artwork"].front_default;
+
+  return {
+    name: json.name,
+    type,
+    image,
+    ...stats
+  };
 }
 
 
